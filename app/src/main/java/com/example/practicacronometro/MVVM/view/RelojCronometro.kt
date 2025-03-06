@@ -53,6 +53,7 @@ fun RelojCronometroPractica(modifier: Modifier =Modifier,viewModel: ViewModelRel
     val minutos = TimeUnit.MILLISECONDS.toMinutes(cuentaCronometro.toLong())
     val segundos = TimeUnit.MILLISECONDS.toSeconds(cuentaCronometro.toLong()) % 60
     val milisegundos = cuentaCronometro % 1000 / 10
+    var lanzar by remember { mutableStateOf(false) }
     LaunchedEffect(Unit)
     {
         while (true) {
@@ -62,11 +63,10 @@ fun RelojCronometroPractica(modifier: Modifier =Modifier,viewModel: ViewModelRel
         }
     }
     //este lanza el cronometro
-    LaunchedEffect(cronometro)
+    LaunchedEffect(lanzar)
     {
-        cuentaCronometro=0
-        while (true) {
 
+        while (lanzar) {
             delay(10)
             cuentaCronometro+=10
         }
@@ -118,14 +118,14 @@ fun RelojCronometroPractica(modifier: Modifier =Modifier,viewModel: ViewModelRel
         if(cronometro){
             Row()
             {
-                Button(onClick = {},colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF105275)
+                Button(onClick = {lanzar=false},colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF105275)
                 )) { Text(text = "Pausa") }
                 Spacer(Modifier.size(10.dp))
-                Button(onClick = {},colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF105275)
-                )) { Text(text = "comienza")}
+                Button(onClick = {lanzar=true},colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF105275)
+                )) { Text(text = "continuar")}
                 Spacer(Modifier.size(10.dp))
-                Button(onClick = {},colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF105275)
-                )) {Text(text = "continuar") }
+                Button(onClick = {cuentaCronometro=0},colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF105275)
+                )) {Text(text = "reiniciar") }
             }
 
         }
