@@ -35,6 +35,7 @@ import kotlinx.coroutines.delay
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
+import java.util.concurrent.TimeUnit
 
 val viewModel : ViewModelRelojCronometro = ViewModelRelojCronometro()
 
@@ -49,9 +50,9 @@ fun RelojCronometroPractica(modifier: Modifier =Modifier,viewModel: ViewModelRel
     var cuentaCronometro by remember { mutableStateOf(0) }
     var reloj by remember { mutableStateOf(false) }
     var cronometro by remember { mutableStateOf(false) }
-    val horas = cuentaCronometro / 3600
-    val minutos = (cuentaCronometro % 3600) / 60
-    val segundos = cuentaCronometro % 60
+    val minutos = TimeUnit.MILLISECONDS.toMinutes(cuentaCronometro.toLong())
+    val segundos = TimeUnit.MILLISECONDS.toSeconds(cuentaCronometro.toLong()) % 60
+    val milisegundos = cuentaCronometro % 1000 / 10
     LaunchedEffect(Unit)
     {
         while (true) {
@@ -65,8 +66,9 @@ fun RelojCronometroPractica(modifier: Modifier =Modifier,viewModel: ViewModelRel
     {
         cuentaCronometro=0
         while (true) {
-            delay(1000)
-            cuentaCronometro+=1
+
+            delay(10)
+            cuentaCronometro+=10
         }
     }
 
@@ -81,12 +83,15 @@ fun RelojCronometroPractica(modifier: Modifier =Modifier,viewModel: ViewModelRel
             Text(text = fecha.toString())
         }
         if(cronometro){
-            Text(text = String.format("%02d:%02d:%02d", horas, minutos, segundos))
+
+            Text(text = String.format("%02d:%02d:%02d", minutos, segundos,milisegundos))
         }
         Spacer(Modifier.size(40.dp))
     Row()
         {
-            Button(onClick = {reloj=relojValido(true) && cronometro==false},
+            Button(onClick = { //para que ejecute ambas tienen que ser declaradas ambas en lineas distintas
+                reloj = relojValido(true)
+                cronometro = false},
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD7A652)
             ) )
             {
@@ -97,7 +102,9 @@ fun RelojCronometroPractica(modifier: Modifier =Modifier,viewModel: ViewModelRel
                 Text(text = "Reloj")
             }
             Spacer(Modifier.size(20.dp))
-            Button(onClick = {cronometro= cronometroValido(true) && reloj==false},
+            Button(onClick = {
+                cronometro= cronometroValido(true)
+                reloj=false},
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD7A652)))
             {
                 Image(painter = painterResource(id = R.drawable.cronometro),
@@ -106,6 +113,21 @@ fun RelojCronometroPractica(modifier: Modifier =Modifier,viewModel: ViewModelRel
                 Spacer(Modifier.size(10.dp))
                 Text(text = "Cronometro")
             }
+        }
+        Spacer(Modifier.size(20.dp))
+        if(cronometro){
+            Row()
+            {
+                Button(onClick = {},colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF105275)
+                )) { Text(text = "Pausa") }
+                Spacer(Modifier.size(10.dp))
+                Button(onClick = {},colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF105275)
+                )) { Text(text = "comienza")}
+                Spacer(Modifier.size(10.dp))
+                Button(onClick = {},colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF105275)
+                )) {Text(text = "continuar") }
+            }
+
         }
     }
 }
