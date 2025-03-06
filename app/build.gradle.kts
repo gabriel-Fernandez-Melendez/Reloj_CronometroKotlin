@@ -40,6 +40,8 @@ android {
 }
 
 dependencies {
+    //dependencia para usar live data ya que no funciona con asStateflow
+    implementation("androidx.compose.runtime:runtime-livedata:1.7.8")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
